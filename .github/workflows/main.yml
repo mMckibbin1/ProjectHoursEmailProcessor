@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     # uses GitHub's checkout action to checkout code form the master branch
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v4
    
     - name: Setup .NET Core SDK
       uses: actions/setup-dotnet@v5.3.0
@@ -28,15 +28,15 @@ jobs:
      
       # copy index.html to 404.html to serve the same file when a file is not found
     - name: copy index.html to 404.html
-      run: cp release/wwwroot/index.html release/wwwroot/404.html
+      run: cp ProjectHoursEmailProcessor/bin/Release/net9.0/browser-wasm/publish/wwwroot/wwwroot/index.html ProjectHoursEmailProcessor/bin/Release/net9.0/browser-wasm/publish/wwwroot/wwwroot/404.html
      
       # add .nojekyll file to tell GitHub pages to not treat this as a Jekyll project. (Allow files and folders starting with an underscore)
     - name: Add .nojekyll file
-      run: touch release/wwwroot/.nojekyll
+      run: touch ProjectHoursEmailProcessor/bin/Release/net9.0/browser-wasm/publish/wwwroot/.nojekyll
      
     - name: Commit wwwroot to GitHub Pages
       uses: JamesIves/github-pages-deploy-action@v4
       with:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         BRANCH: master
-        FOLDER: release/wwwroot
+        FOLDER: ProjectHoursEmailProcessor/bin/Release/net9.0/browser-wasm/publish/wwwroot
