@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.37314.3 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectHoursEmailProcessor", "ProjectHoursEmailProcessor\ProjectHoursEmailProcessor.csproj", "{09C1FF05-480F-DFD7-0D48-D3A5901BFEF2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmailParser", "EmailParser\EmailParser.csproj", "{28BCFF50-A9BE-95D6-67F6-1F80DF2CC92F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{09C1FF05-480F-DFD7-0D48-D3A5901BFEF2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{09C1FF05-480F-DFD7-0D48-D3A5901BFEF2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{09C1FF05-480F-DFD7-0D48-D3A5901BFEF2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{09C1FF05-480F-DFD7-0D48-D3A5901BFEF2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{28BCFF50-A9BE-95D6-67F6-1F80DF2CC92F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{28BCFF50-A9BE-95D6-67F6-1F80DF2CC92F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{28BCFF50-A9BE-95D6-67F6-1F80DF2CC92F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{28BCFF50-A9BE-95D6-67F6-1F80DF2CC92F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B4692752-A8DE-4436-8978-9246A0E4EBBF}
+	EndGlobalSection
+EndGlobal

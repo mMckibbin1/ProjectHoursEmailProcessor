@@ -1,0 +1,139 @@
+@using System.Diagnostics
+
+<div class="layout">
+    <section class="top-left">
+        <FluentCard Style="height:100%">
+            <h2>Search For a Project</h2>
+            <FluentStack Orientation="Orientation.Horizontal" Wrap="true" HorizontalGap="8px">
+                <div>
+                    <FluentCombobox Label="Select a Mentor"
+                                    Placeholder="Select a Mentor"
+                                    Multiple="false"
+                                    TOption="string"
+                                    TValue="string"
+                                    Items="@mentorNames"
+                                    @bind-Value="@selectedMentorName">
+                    </FluentCombobox>
+                </div>
+                <div>
+                    <FluentCombobox Label="Select a Business"
+                                    Placeholder="Select a Business"
+                                    Multiple="false"
+                                    TOption="string"
+                                    TValue="string"
+                                    Items="@businessNames"
+                                    @bind-Value="@selectedBusinessName">
+                    </FluentCombobox>
+                </div>
+                <div>
+                    <FluentDatePicker Label="Days view"
+                                      @bind-Value="@startDate"
+                                      RenderStyle="DatePickerRenderStyle.Native" />
+                </div>
+                <div>
+                    <FluentDatePicker Label="Days view"
+                                      @bind-Value="@endDate"
+                                      RenderStyle="DatePickerRenderStyle.Native" />
+                </div>
+                <FluentStack Orientation="Orientation.Horizontal" HorizontalGap="8px">
+                    <FluentButton Type="ButtonType.Button" Disabled="disableSubmit" Appearance="ButtonAppearance.Primary" @onclick="Filter">Submit</FluentButton>
+                    <FluentButton Type="ButtonType.Button" Appearance="ButtonAppearance.Outline" @onclick="RestFilter">Reset</FluentButton>
+                </FluentStack>
+            </FluentStack>
+        </FluentCard>
+
+    </section>
+    <section class="top-right">
+        <SummaryCard ProjectSummary="projectSummary" />
+    </section>
+    <section class="bottom">
+        <EmailDataGrid Emails="emails" />
+    </section>
+</div>
+
+@code {
+    [Parameter, EditorRequired]
+    public AggregatedEmailData AggregatedEmailData { get; set; }
+    private AggregatedEmailData? _prevAggregatedEmailData;
+
+    private List<string> mentorNames = default!;
+    private string? selectedMentorName;
+
+    private List<string> businessNames = default!;
+    private string? selectedBusinessName;
+
+    private DateOnly? startDate;
+    private DateOnly? endDate;
+
+    private bool disableSubmit => selectedBusinessName is null || selectedMentorName is null || startDate is null || endDate is null;
+
+    private ProjectSummary? projectSummary;
+
+    private IQueryable<EmailGridItem> emails = default!;
+
+    protected override void OnParametersSet()
+    {
+        Debug.Assert(AggregatedEmailData is not null);
+        if (_prevAggregatedEmailData == AggregatedEmailData)
+        {
+            return;
+        }
+
+        _prevAggregatedEmailData = AggregatedEmailData;
+
+        @* AggregatedEmailData.SentForApprovalEmails.ForEach(x => x.) Maybe a TODO would need to use to address and split on the ';'*@
+        mentorNames = AggregatedEmailData.ApprovedHoursEmails.Select(x => x.MentorName)
+            .Concat(AggregatedEmailData.RejectionEmails.Select(x => x.MentorName))
+            .Distinct(StringComparer.CurrentCultureIgnoreCase)
+            .Order()
+            .ToList();
+
+        businessNames = AggregatedEmailData.ApprovedHoursEmails.Select(x => x.BusinessName)
+            .Concat(AggregatedEmailData.RejectionEmails.Select(x => x.BusinessName))
+            .Concat(AggregatedEmailData.SentForApprovalEmails.Select(x => x.BusinessName))
+            .Distinct(StringComparer.CurrentCultureIgnoreCase)
+            .Order()
+            .ToList();
+
+        DisplayAllEmails();
+
+    }
+
+    private void Filter()
+    {
+        var approved = AggregatedEmailData.ApprovedHoursEmails.Where(x => x.BusinessName.Equals(selectedBusinessName, StringComparison.CurrentCultureIgnoreCase) &&
+        x.MentorName.Equals(selectedMentorName, StringComparison.CurrentCultureIgnoreCase) && (x.SessionDate >= startDate && x.SessionDate <= endDate)).ToList();
+
+        var sent = AggregatedEmailData.SentForApprovalEmails.Where(x => x.BusinessName.Equals(selectedBusinessName, StringComparison.CurrentCultureIgnoreCase) &&
+        x.MentorName.Equals(selectedMentorName, StringComparison.CurrentCultureIgnoreCase) && (x.SessionDate >= startDate && x.SessionDate <= endDate)).ToList();
+
+        var rejected = AggregatedEmailData.RejectionEmails.Where(x => x.BusinessName.Equals(selectedBusinessName, StringComparison.CurrentCultureIgnoreCase) &&
+        x.MentorName.Equals(selectedMentorName, StringComparison.CurrentCultureIgnoreCase) && (x.SessionDate >= startDate && x.SessionDate <= endDate)).ToList();
+
+        projectSummary = new(approvedHoursEmails: approved,
+        sentForApprovalEmails: sent,
+        rejectionEmails: rejected);
+
+        emails = approved.Select(x => EmailGridItem.FromEmail(x))
+            .Concat(sent.Select(x => EmailGridItem.FromEmail(x)))
+            .Concat(rejected.Select(x => EmailGridItem.FromEmail(x))).AsQueryable();
+    }
+
+    private void RestFilter()
+    {
+        DisplayAllEmails();
+        projectSummary = null;
+    }
+
+    private void DisplayAllEmails()
+    {
+        emails = AggregatedEmailData.ApprovedHoursEmails.Select(x => EmailGridItem.FromEmail(x))
+            .Concat(AggregatedEmailData.RejectionEmails.Select(x => EmailGridItem.FromEmail(x)))
+            .Concat(AggregatedEmailData.SentForApprovalEmails.Select(x => EmailGridItem.FromEmail(x))).AsQueryable();
+    }
+
+    private sealed class FilterModal
+    {
+
+    }
+}

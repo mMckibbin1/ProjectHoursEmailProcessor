@@ -1,0 +1,64 @@
+﻿@page "/"
+@using System.Diagnostics;
+@using ProjectHoursEmailProcessor.Components
+
+<PageTitle>Home</PageTitle>
+
+<div class="page-container">
+    @if (aggregatedEmailData is null)
+    {
+        <h1>Upload Email CSV File</h1>
+        <FluentInputFile Disabled="isProcessing" Id="my-file-uploader" Mode="InputFileMode.Stream" Multiple="false"
+                         Accept=".csv" @bind-ProgressPercent="@progressPercent" OnFileUploaded="@OnFileUpLoaded" Height="300px">
+            <ChildContent>
+                <label for="my-file-uploader">
+                    @if (!isProcessing)
+                    {
+                        <FluentIcon Value="@(new @Icons.Regular.Size24.ArrowUpload())" Color="@Color.Primary" />
+                    }
+                    else
+                    {
+                        <FluentSpinner Size="SpinnerSize.Huge" />
+                    }
+                </label>
+                @if (!isProcessing)
+                {
+                    <div class="@Margin.All2">
+                        Drag The email CSV file you wish to upload,
+                        or <label for="my-file-uploader">browse</label>
+                        for them.
+                    </div>
+                }
+                else
+                {
+                    <div class="@Margin.All2">
+                        Processing Emails...
+                    </div>
+                }
+            </ChildContent>
+        </FluentInputFile>
+    }
+    else
+    {
+        <EmailDashboard AggregatedEmailData="aggregatedEmailData" />
+    }
+</div>
+
+@code {
+    private bool isProcessing;
+    private AggregatedEmailData? aggregatedEmailData;
+    private int progressPercent = 0;
+
+    private async Task OnFileUpLoaded(FluentInputFileEventArgs args)
+    {
+        using var stream = args.Stream;
+        isProcessing = true;
+        Debug.Assert(stream is not null);
+
+        aggregatedEmailData = await EmailDataParser.ParseAsync(stream);
+
+        isProcessing = false;
+        progressPercent = 0;
+    }
+}
+
