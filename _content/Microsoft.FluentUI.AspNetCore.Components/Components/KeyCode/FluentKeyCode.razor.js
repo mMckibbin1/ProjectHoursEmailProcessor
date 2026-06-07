@@ -1,0 +1,89 @@
+export var Microsoft;
+(function (Microsoft) {
+    var FluentUI;
+    (function (FluentUI) {
+        var Blazor;
+        (function (Blazor) {
+            var KeyCode;
+            (function (KeyCode) {
+                function RegisterKeyCode(globalDocument, eventNames, id, elementRef, onlyCodes, excludeCodes, stopPropagation, preventDefault, preventDefaultOnly, dotNetHelper, preventMultipleKeydown, stopRepeat) {
+                    const element = globalDocument
+                        ? document
+                        : elementRef == null ? document.getElementById(id) : elementRef;
+                    if (document._fluentKeyCodeEvents == null) {
+                        document._fluentKeyCodeEvents = {};
+                    }
+                    if (!!element) {
+                        const eventId = Math.random().toString(36).slice(2);
+                        let fired = false;
+                        const handlerKeydown = function (e) {
+                            if (!fired || !preventMultipleKeydown) {
+                                fired = true;
+                                return handler(e, "OnKeyDownRaisedAsync");
+                            }
+                        };
+                        const handlerKeyup = function (e) {
+                            fired = false;
+                            return handler(e, "OnKeyUpRaisedAsync");
+                        };
+                        const handler = function (e, netMethod) {
+                            const ev = e;
+                            const keyCode = ev.which || ev.keyCode || ev.charCode;
+                            if (stopRepeat && e.repeat) {
+                                return;
+                            }
+                            if (!!dotNetHelper && !!dotNetHelper.invokeMethodAsync) {
+                                const targetId = ev.currentTarget?.id ?? "";
+                                const isPreventDefault = preventDefault || (preventDefaultOnly.length > 0 && preventDefaultOnly.includes(keyCode));
+                                const isStopPropagation = stopPropagation;
+                                if (excludeCodes.length > 0 && excludeCodes.includes(keyCode)) {
+                                    if (isPreventDefault) {
+                                        e.preventDefault();
+                                    }
+                                    if (isStopPropagation) {
+                                        e.stopPropagation();
+                                    }
+                                    return;
+                                }
+                                if (onlyCodes.length == 0 || (onlyCodes.length > 0 && onlyCodes.includes(keyCode))) {
+                                    if (isPreventDefault) {
+                                        e.preventDefault();
+                                    }
+                                    if (isStopPropagation) {
+                                        e.stopPropagation();
+                                    }
+                                    dotNetHelper.invokeMethodAsync(netMethod, keyCode, e.key, e.ctrlKey, e.shiftKey, e.altKey, e.metaKey, e.location, targetId, e.repeat);
+                                    return;
+                                }
+                            }
+                        };
+                        if (preventMultipleKeydown || (!!eventNames && eventNames.includes("KeyDown"))) {
+                            element.addEventListener('keydown', handlerKeydown);
+                        }
+                        if (preventMultipleKeydown || (!!eventNames && eventNames.includes("KeyUp"))) {
+                            element.addEventListener('keyup', handlerKeyup);
+                        }
+                        document._fluentKeyCodeEvents[eventId] = { source: element, handlerKeydown, handlerKeyup };
+                        return eventId;
+                    }
+                    return "";
+                }
+                KeyCode.RegisterKeyCode = RegisterKeyCode;
+                function UnregisterKeyCode(eventId) {
+                    if (document._fluentKeyCodeEvents != null) {
+                        const keyEvent = document._fluentKeyCodeEvents[eventId];
+                        const element = keyEvent.source;
+                        if (!!keyEvent.handlerKeydown) {
+                            element.removeEventListener("keydown", keyEvent.handlerKeydown);
+                        }
+                        if (!!keyEvent.handlerKeyup) {
+                            element.removeEventListener("keyup", keyEvent.handlerKeyup);
+                        }
+                        delete document._fluentKeyCodeEvents[eventId];
+                    }
+                }
+                KeyCode.UnregisterKeyCode = UnregisterKeyCode;
+            })(KeyCode = Blazor.KeyCode || (Blazor.KeyCode = {}));
+        })(Blazor = FluentUI.Blazor || (FluentUI.Blazor = {}));
+    })(FluentUI = Microsoft.FluentUI || (Microsoft.FluentUI = {}));
+})(Microsoft || (Microsoft = {}));

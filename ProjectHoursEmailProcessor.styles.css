@@ -1,0 +1,47 @@
+@import '_content/Microsoft.FluentUI.AspNetCore.Components/Microsoft.FluentUI.AspNetCore.Components.bundle.scp.css';
+
+/* /Components/EmailDashboard.razor.rz.scp.css */
+.layout[b-eigayrj591] {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto 1fr;
+  grid-template-areas:
+    "top-left top-right"
+    "bottom bottom";
+  min-height: 100vh;
+  gap:16px;
+  overflow-y: auto;
+}
+
+.top-left[b-eigayrj591] {
+  grid-area: top-left;
+}
+
+.top-right[b-eigayrj591] {
+  grid-area: top-right;
+}
+
+.bottom[b-eigayrj591] {
+  grid-area: bottom;
+}
+/* /Components/SummaryCard.razor.rz.scp.css */
+dl[b-7ydmhes0r5] {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 4px 12px;
+}
+
+dt[b-7ydmhes0r5] {
+    font-weight: bold;
+}
+
+dd[b-7ydmhes0r5] {
+    margin: 0;
+}
+/* /Layout/MainLayout.razor.rz.scp.css */
+/* /Pages/Home.razor.rz.scp.css */
+.page-container[b-cw0tzyx7pj] {
+    padding-top: 1rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
