@@ -1,5 +1,8 @@
 name: Deploy to GitHub Pages
 
+env:
+  PUBLISH_DIR: ProjectHoursEmailProcessor/bin/Release/net9.0/browser-wasm/publish/wwwroot
+
 # Run workflow on every push to the master branch
 on:
   push:
@@ -33,19 +36,19 @@ jobs:
      
       # changes the base-tag in index.html from '/' to 'BlazorGitHubPagesDemo' to match GitHub Pages repository subdirectory
     - name: Change base-tag in index.html from / to ProjectHoursEmailProcessor
-      run: sed -i 's/<base href="\/" \/>/<base href="\/ProjectHoursEmailProcessor\/" \/>/g' release/wwwroot/index.html
+      run: sed -i 's/<base href="\/" \/>/<base href="\/ProjectHoursEmailProcessor\/" \/>/g'  ${{env.PUBLISH_DIR}}/index.html
      
       # copy index.html to 404.html to serve the same file when a file is not found
     - name: copy index.html to 404.html
-      run: cp ProjectHoursEmailProcessor/bin/Release/net9.0/browser-wasm/publish/wwwroot/wwwroot/index.html ProjectHoursEmailProcessor/bin/Release/net9.0/browser-wasm/publish/wwwroot/wwwroot/404.html
+      run: cp ${{env.PUBLISH_DIR}}/index.html ${{env.PUBLISH_DIR}}/404.html
      
       # add .nojekyll file to tell GitHub pages to not treat this as a Jekyll project. (Allow files and folders starting with an underscore)
     - name: Add .nojekyll file
-      run: touch ProjectHoursEmailProcessor/bin/Release/net9.0/browser-wasm/publish/wwwroot/.nojekyll
+      run: touch  ${{env.PUBLISH_DIR}}/.nojekyll
      
     - name: Commit wwwroot to GitHub Pages
       uses: JamesIves/github-pages-deploy-action@v4
       with:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         BRANCH: master
-        FOLDER: ProjectHoursEmailProcessor/bin/Release/net9.0/browser-wasm/publish/wwwroot
+        FOLDER:  ${{env.PUBLISH_DIR}}
