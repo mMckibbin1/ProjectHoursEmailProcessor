@@ -21,6 +21,15 @@ jobs:
       # publishes Blazor project to the release-folder
     - name: Publish .NET Core Project
       run: dotnet publish ProjectHoursEmailProcessor/ProjectHoursEmailProcessor.csproj -c Release -o release --nologo
+
+      
+    - name: Inspect publish output
+      run: |
+        echo "---- release ----"
+        find release -maxdepth 3 -type f | sort
+        echo "---- release/wwwroot ----"
+        find release/wwwroot -maxdepth 3 -type f | sort || true
+
      
       # changes the base-tag in index.html from '/' to 'BlazorGitHubPagesDemo' to match GitHub Pages repository subdirectory
     - name: Change base-tag in index.html from / to ProjectHoursEmailProcessor
